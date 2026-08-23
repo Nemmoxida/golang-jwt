@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"office-expense-management-backend/database"
 	"os"
@@ -11,9 +12,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secretKey = []byte(os.Getenv("JWT_SECRET"))
-
 func generateToken(username string, departement string) (string, error) {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		return "", fmt.Errorf("JWT_SECRET is not set")
+	}
+
 	claims := jwt.MapClaims{
 		"sub":         "123",
 		"username":    username,
@@ -23,12 +27,7 @@ func generateToken(username string, departement string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	signedToken, err := token.SignedString(secretKey)
-	if err != nil {
-		return "", err
-	}
-
-	return signedToken, nil
+	return token.SignedString([]byte(secret))
 }
 
 type UserReq struct {
@@ -49,7 +48,7 @@ func Login(c *gin.Context) {
 
 	defer pool.Close()
 
-	row := pool.QueryRow(context.Background(), "SELECT username, password FROM users WHERE username = $1", req.Username)
+	row := pool.QueryRow(context.Background(), "SELECT username, password, departement FROM users WHERE username = $1", req.Username)
 
 	var username, password, departement string
 
