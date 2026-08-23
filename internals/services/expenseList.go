@@ -25,6 +25,11 @@ type ExpenseQuery struct {
 	Departement       string    `json:"departement"`
 }
 
+type Respond struct {
+	Created_at time.Time
+	Data       []ExpenseQuery
+}
+
 type ExpenseList struct {
 }
 
@@ -86,5 +91,7 @@ func (e *ExpenseList) GetExpenseList(c *gin.Context) {
 		expenses = append(expenses, expense)
 	}
 
-	c.JSON(http.StatusOK, expenses)
+	resp := &Respond{Created_at: time.Now(), Data: expenses}
+
+	c.JSON(http.StatusOK, resp)
 }
