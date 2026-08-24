@@ -38,15 +38,10 @@ func NewExpenseList() *ExpenseList {
 }
 
 func (e *ExpenseList) GetExpenseList(c *gin.Context) {
-	token := c.GetHeader("authorization")
 
-	verifyToken, err := pkg.VerifyToken(token)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	claims := pkg.ExtrackClaims(c)
 
-	userDepartement := verifyToken.Departement
+	userDepartement := claims.Departement
 
 	pool, err := database.Connect()
 	if err != nil {

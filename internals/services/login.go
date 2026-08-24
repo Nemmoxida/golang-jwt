@@ -12,7 +12,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func generateToken(username string, departement string) (string, error) {
+func generateToken(userId string, username string, departement string) (string, error) {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
 		return "", fmt.Errorf("JWT_SECRET is not set")
@@ -20,6 +20,7 @@ func generateToken(username string, departement string) (string, error) {
 
 	claims := jwt.MapClaims{
 		"sub":         "123",
+		"userId":      userId,
 		"username":    username,
 		"departement": departement,
 		"exp":         time.Now().Add(24 * time.Hour).Unix(),
@@ -48,11 +49,11 @@ func Login(c *gin.Context) {
 
 	defer pool.Close()
 
-	row := pool.QueryRow(context.Background(), "SELECT username, password, departement FROM users WHERE username = $1", req.Username)
+	row := pool.QueryRow(context.Background(), "SELECT username, password, id, departement FROM users WHERE username = $1", req.Username)
 
-	var username, password, departement string
+	var username, password, departement, userId string
 
-	if err := row.Scan(&username, &password, &departement); err != nil {
+	if err := row.Scan(&username, &password, &userId, &departement); err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 		return
 	}
@@ -62,7 +63,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := generateToken(username, departement)
+	token, err := generateToken(userId, username, departement)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
