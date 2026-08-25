@@ -9,6 +9,7 @@ import (
 )
 
 type Claims struct {
+	UserId      string `json:"userId"`
 	Username    string `json:"username"`
 	Departement string `json:"departement"`
 

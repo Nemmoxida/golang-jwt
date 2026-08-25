@@ -11,8 +11,9 @@ func main() {
 	godotenv.Load()
 
 	ExpenseList := services.NewExpenseList()
+	UserUsage := services.NewUserUsage()
 
-	r := router.Router(ExpenseList)
+	r := router.Router(ExpenseList, UserUsage)
 
 	r.Run(":3001")
 }

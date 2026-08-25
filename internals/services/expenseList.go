@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"office-expense-management-backend/database"
 	"office-expense-management-backend/pkg"
@@ -27,7 +26,7 @@ type ExpenseQuery struct {
 
 type Respond struct {
 	Created_at time.Time
-	Data       []ExpenseQuery
+	Data       any
 }
 
 type ExpenseList struct {
@@ -50,8 +49,6 @@ func (e *ExpenseList) GetExpenseList(c *gin.Context) {
 	}
 
 	defer pool.Close()
-
-	fmt.Println(userDepartement)
 
 	rows, err := pool.Query(context.Background(), "SELECT ec.id, ec.claim_title, ec.claim_description, ec.category, ec.image_id, ec.creation_date, ec.amount, ec.status, u.departement, u.username, m.name FROM expenses_claim ec JOIN users u ON u.id = ec.user_id JOIN merchants m ON m.id = ec.merchant_id WHERE u.departement = $1 LIMIT 100", userDepartement)
 	if err != nil {
