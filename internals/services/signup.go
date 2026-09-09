@@ -26,6 +26,7 @@ func Signup(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"errorProcessingRequest": err})
 	}
 
+	// your query to the database
 	row := pool.QueryRow(context.Background(), "INSERT INTO ** VALUES ($1, $2)", req.Username, hashsedPassword)
 
 }
