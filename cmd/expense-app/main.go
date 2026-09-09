@@ -10,10 +10,8 @@ import (
 func main() {
 	godotenv.Load()
 
-	ExpenseList := services.NewExpenseList()
-	UserUsage := services.NewUserUsage()
 
-	r := router.Router(ExpenseList, UserUsage)
+	r := router.Router()
 
 	r.Run(":3001")
 }
