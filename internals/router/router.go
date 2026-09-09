@@ -2,7 +2,6 @@ package router
 
 import (
 	"office-expense-management-backend/internals/services"
-	"office-expense-management-backend/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,6 +10,7 @@ func Router(expenseList *services.ExpenseList, userUsage *services.UserUsage) *g
 	r := gin.Default()
 
 	r.POST("/login", services.Login)
+	r.POST("/signup", services.Signup)
 
 	return r
 
